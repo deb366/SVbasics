@@ -25,7 +25,7 @@ endmodule
 
 
 //Alternative code 
-Lsb has highest priority, no request no grant 
+//Lsb has highest priority, no request no grant 
 
 //Code
 module fixed_priority  #(parameter N = 4)
