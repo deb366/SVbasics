@@ -117,7 +117,7 @@ Enum logic [2:0] {Sideal,S0,S1,S2,S3};
         S3: GNT=4'b1000;
         default: GNT=4'b0000;
         endcase
-     end
-    
-Endmodule
+     end   
+endmodule
+
 
