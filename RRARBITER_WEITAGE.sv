@@ -1,5 +1,4 @@
 
-
 module round_robin_arbiter_variable_time_slice(
 		input clk,
 		input rst_n,
@@ -8,9 +7,9 @@ module round_robin_arbiter_variable_time_slice(
 	
 		);
 	
-	reg [1:0] count;
-	reg [3:0] present_state;
-	reg [3:0] next_state;
+  reg [1:0] count;
+  reg [3:0] present_state;
+  reg [3:0] next_state;
   parameter [3:0] S_ideal = 4'b0000;
   parameter [3:0] S_0 = 4'b0001;
   parameter [3:0] S_1 = 4'b0010;
