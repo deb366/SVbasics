@@ -9,7 +9,7 @@ module model #(parameter
     output logic [8*BITWIDTH:0] dout
 );
     
-    localparam NINPUTS = 8;
+    localparam NINPUTS = 8;  //the number of inputs that can come in a stream 
     logic [BITWIDTH-1:0] mem [NINPUTS-1:0];
     logic [BITWIDTH-1:0] tmp;
     logic [$clog2(NINPUTS)-1:0] addr;
