@@ -1,4 +1,4 @@
-//Same incoming input stream but the data is accumulated at the MSB,  (i.e   100,1100,01100,  001100, 1001100) , write a code to find the //modulo of the whole number by 5 (accumulated vector % 5).
+//Same incoming input stream but the data is accumulated at the MSB,  (i.e   100,1100,01100,  001100, 1001100) , write a code to find the //modulo of the whole number by 5 (accumulated vector % 5)
 
 // Code 
 module mod5(
