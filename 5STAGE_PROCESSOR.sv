@@ -1,4 +1,5 @@
 //W I P 
+// This module will take an instruction and will generate the output and a flag, after each WB state the ouput will be written in a memory location.
 
 // Code your design here
 
