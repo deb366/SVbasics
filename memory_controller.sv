@@ -12,6 +12,7 @@ module memory_controller #(
     input logic [DATA_WIDTH-1:0] write_data, 
     input logic read_en, 
     input logic write_en,
+  	input logic pause_refresh,
     output logic [DATA_WIDTH-1:0] read_data,
     output logic ready,
     // DDR memory interface signals
@@ -108,8 +109,23 @@ always_comb begin
             next_state = IDLE; // Transition to IDLE state assuming completion of the DDR operation
         end
         REFRESH_PAUSE: begin
-            // Logic to handle refresh pause conditions (not detailed here)
+          //**
+           //REFRESH_PAUSE: begin
+            if (!pause_refresh) begin
+                // If pause signal is deasserted, resume normal operation
+                next_state = IDLE;
+            end else if (refresh_timer >= REFRESH_INTERVAL) begin
+                // Even if we are pausing, we must ensure the refresh happens
+                // periodically to prevent data loss. So if the refresh timer has expired,
+                // perform the refresh despite the pause request.
+                next_state = REFRESH;
+            end
+            // While in pausestate, continue to monitor the refresh_timer
+            // but do not increment it as we are not in a normal operation state
+            //refresh_timer_en = 1'b0;
         end
+          
+
     endcase
 end
 
