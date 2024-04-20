@@ -1,5 +1,6 @@
 //W I P 
-// This module will take an instruction and will generate the output and a flag, after each WB state the ouput will be written in a memory location.
+// This module will take an instruction and will generate the output and a flag, after each WB state the ouput will be written in a 
+memory location.
 
 // Code your design here
 
@@ -14,7 +15,7 @@ module PipelinedProcessor #(parameter DATA_WIDTH = 32) (
 
   logic w_stage_complete;
 // Pipeline stages
-typedef enum logic [1:0] {
+  typedef enum logic [2:0] {
     IF_STAGE,
     ID_STAGE,
     EX_STAGE,
@@ -82,6 +83,7 @@ always_comb begin
                 next_stage = IF_STAGE;
                 w_stage_complete = 1;
             end
+          
             default: begin
                 next_stage = IF_STAGE;
             end
@@ -97,3 +99,5 @@ always_comb begin
 
 
 endmodule
+
+
