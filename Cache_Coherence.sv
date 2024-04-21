@@ -5,6 +5,10 @@
 The MESI protocol is a well-known cache coherence protocol used in multiprocessor systems. 
 It ensures consistency of the data stored in the local caches of a shared-memory system. MESI stands for the four states that a cache line can be in:
 
+When the data first read to a CACHE is read it goes to EXCLUSIVE state. When the local processor writes that cache-line it goes to MODIFIED STATE. If some other processor sends a read 
+request that cache-line, the first processor writes that data to Main Memory, after that the 2nd processor reads that data and both of these processor goes to SHARED state. After that if
+any of the processor writes to that cache line, that processor goes to MODIFIED state and all other goes to INVALID state.
+
 1. Modified (M):
 Exclusive Ownership: The cache line is present only in the current cache and not in any other cache.
 Dirty: The data has been modified (written to) by the local processor and is different from what is in main memory.
