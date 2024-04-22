@@ -1,4 +1,5 @@
-/*
+//W I P - the lock mechanism should be developed properly
+/* 
 //Implement a configurable multi-port register file module with the following features:
 	• Configurable number of registers, data width, and number of read and write ports.
 	• Support for simultaneous read and write operations on different ports.
