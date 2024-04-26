@@ -13,7 +13,7 @@ output reg [3:0] GNT
    // parameter [2:0]     S2 = 3'b011;
    // parameter [2:0]     S3 = 3'b100;
     
-Enum logic [2:0] {Sideal,S0,S1,S2,S3};
+enum logic [2:0] {Sideal,S0,S1,S2,S3};
     always @(posedge clk or negedge rst_n)
     
     begin
