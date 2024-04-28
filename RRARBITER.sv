@@ -120,4 +120,114 @@ enum logic [2:0] {Sideal,S0,S1,S2,S3};
      end   
 endmodule
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// The below code allows the requester 0 with highest priority 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+module round_robin_arbiter(
+    input logic clk,
+    input logic reset,
+    input logic [3:0] request,  // Request inputs from 4 requesters
+    output logic [3:0] grant    // Grant outputs to 4 requesters
+);
+
+    // State encoding for each requester
+    typedef enum logic [2:0] {
+        IDLE = 3'b000,
+        REQ0 = 3'b001,
+        REQ1 = 3'b010,
+        REQ2 = 3'b011,
+        REQ3 = 3'b100  // Added state for the fourth requester
+    } state_t;
+
+    state_t state, next_state;
+
+    // State transition logic
+    always_ff @(posedge clk or negedge reset) begin
+        if (!reset)
+            state <= IDLE;
+        else
+            state <= next_state;
+    end
+
+    // Next state logic based on current state and requests
+    always_comb begin
+        case (state)
+            IDLE: begin
+                if (request[0])
+                    next_state = REQ0;
+                else if (request[1])
+                    next_state = REQ1;
+                else if (request[2])
+                    next_state = REQ2;
+                else if (request[3])
+                    next_state = REQ3; // Handling request from the fourth requester
+                else
+                    next_state = IDLE;
+            end
+            REQ0: begin
+                if (request[0])
+                    next_state = REQ0;              
+                else if (request[1])
+                    next_state = REQ1;
+                else if (request[2])
+                    next_state = REQ2;
+                else if (request[3])
+                    next_state = REQ3;
+                else
+                    next_state = IDLE;
+            end
+            REQ1: begin
+                if (request[0])
+                    next_state = REQ0;               
+                else if (request[2])
+                    next_state = REQ2;
+                else if (request[3])
+                    next_state = REQ3;
+                else if (request[1])
+                    next_state = REQ1;
+                else
+                    next_state = IDLE;
+            end
+            REQ2: begin
+                if (request[0])
+                    next_state = REQ0;               
+                else if (request[3])
+                    next_state = REQ3;
+                else if (request[1])
+                    next_state = REQ1;
+                else if (request[2])
+                    next_state = REQ2;
+                else
+                    next_state = IDLE;
+            end
+            REQ3: begin
+                if (request[0])
+                    next_state = REQ0;
+                else if (request[1])
+                    next_state = REQ1;
+                else if (request[2])
+                    next_state = REQ2;
+                else if (request[3])
+                    next_state = REQ3;
+                else
+                    next_state = IDLE;
+            end
+            default: next_state = IDLE;
+        endcase
+    end
+
+    // Grant logic based on state
+    always_comb begin
+        grant = 4'b0000; // Default to no grants, updated to handle 4 requesters
+        case (state)
+            REQ0: grant[0] = 1;
+            REQ1: grant[1] = 1;
+            REQ2: grant[2] = 1;
+            REQ3: grant[3] = 1; // Added grant for the fourth requester
+            default: grant = 4'b0000;
+        endcase
+    end
+
+endmodule
 
