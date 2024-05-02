@@ -26,8 +26,8 @@ module ForwardClockGating (
 endmodule
 
 
-//Backward clock gating 
-// Code your design here
+//Backward clock gating - Here the gating signal is internally generated 
+
 module BackwardClockGating (
     input logic clk,        // System clock
     input logic rst_n,      // Active low reset
