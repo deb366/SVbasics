@@ -8,6 +8,7 @@ L (11th letter) is shifted by K (10th letter), resulting in: (11+10)mod  26=
 O (14th letter) is shifted by E (4th letter), resulting in: (14+4)mod  26=18(14 + 4) \mod 26 = 18(14+4)mod26=18 which is S.
 so HELLO -> RIJVS
 */
+//This has some syntax issue 
 
 
 module VIGENERECIPHER(
