@@ -5,7 +5,7 @@
 	• Support for simultaneous read and write operations on different ports.
 Optional register locking mechanism to prevent simultaneous writes to the same register.
 */
-
+//This code is useful if you assign certain dedicated register location to each write/read port//
 //CODE 
 module MULTI_PORT_REGISTER #(
     parameter int NUM_REGS = 8,          // Number of registers
