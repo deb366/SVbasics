@@ -1,4 +1,4 @@
-// 45.	Design a logic to clock out index of bits having 1 value on a 8bit number and use minimal number clocks. [example 1000 1100 will give 2,3,7 at 3 consecutive clocks] 
+// 57.	Design a parameterized (N is the max count) logic where each clock will generate the output like (0,1,2,2,3,3,3,4,4,4,4,…,N with N times)? 
 //WIP
 
 
