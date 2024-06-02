@@ -1,13 +1,17 @@
 // 57.	Design a parameterized (N is the max count) logic where each clock will generate the output like (0,1,2,2,3,3,3,4,4,4,4,…,N with N times)? 
 //WIP
 
-
 // Code your design here
 
 
-module COUNT_TIMES #(parameter N =4) (input logic clk,rstn, output logic [$clog2(N)-1:0] O_COUNT);
+module COUNT_TIMES #(
+    parameter N = 4,            // Declare N here
+    localparam N0 = $clog2(N)   // Then declare N0 using N
+) (
+    input logic clk, rstn,
+    output logic [N0-1:0] O_COUNT
+); // Number of bits to count up to N
   
-  localparam N0 = $clog2(N);  // Number of bits to count up to N
   logic [N0-1:0] r_times;
   logic  w_next;
 
