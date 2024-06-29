@@ -10,7 +10,7 @@ module INDEX_COUNT #(parameter N = 8) (input logic clk,rstn, input logic I_LOAD,
 
 always_comb begin
   w_index = 'h0;
-  for (int i=0;i<8;i++)begin 
+  for (int i=0;i<N;i++)begin 
     if(r_temp[i]) begin 
       w_index = i[2:0];
       break;
