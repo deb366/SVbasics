@@ -69,3 +69,88 @@ module DEADLINE_SCHEDULER(
         end
     end
 endmodule
+
+
+//++++++++++++++++++++++++++++++++++++++++//
+//Test bench
+//++++++++++++++++++++++++++++++++++++++++//
+`timescale 1ns / 1ps
+
+module tb_DEADLINE_SCHEDULER();
+
+    logic clk;
+    logic reset;
+    logic new_task;
+    int deadline;
+    reg task_scheduled;
+    reg [31:0] scheduled_task_id;
+
+    // Instantiate the DEADLINE_SCHEDULER
+    DEADLINE_SCHEDULER dut(
+        .clk(clk),
+        .reset(reset),
+        .new_task(new_task),
+        .deadline(deadline),
+        .task_scheduled(task_scheduled),
+        .scheduled_task_id(scheduled_task_id)
+    );
+
+    // Clock generation
+    always #5 clk = ~clk; // 100MHz clock
+
+    // Test sequence
+    initial begin
+        // Initialize signals
+        clk = 0;
+        reset = 1;
+        new_task = 0;
+        deadline = 0;
+        #10; // Allow reset to take effect
+
+        reset = 0;
+        #10;
+
+        // Generate tasks with varying frequency
+        fork
+            // Fast varying new_task signal
+            repeat (50) begin
+                new_task = 1;
+                deadline = $random % 30 + 1; // Random deadline between 1 and 30 cycles
+                #10;
+                new_task = 0;
+                #(($random % 10 + 1) * 10); // Randomly wait between 10 to 100 ns before next task
+            end
+
+            // Long duration run
+            #10000; // Extend the simulation time to observe longer-term behavior
+        join
+
+        // Additional Tests after dynamic input
+        #200; // Wait for the scheduler to process tasks
+        reset = 1;
+        #10;
+        reset = 0;
+        #500; // Observe no tasks should be scheduled after reset
+
+        $finish; // End simulation
+    end
+
+    // Monitor outputs
+    always @(posedge clk) begin
+        if (task_scheduled) begin
+            $display("Time: %0t, Task ID %0d scheduled", $time, scheduled_task_id);
+        end
+    end
+
+    // Error check
+    always @(posedge clk) begin
+        if (task_scheduled && (scheduled_task_id < 0 || scheduled_task_id >= 8)) begin
+            $display("Error: Invalid task ID %0d scheduled at time %0t", scheduled_task_id, $time);
+        end
+    end
+  initial begin 
+    $dumpvars();
+  end 
+
+endmodule
+
