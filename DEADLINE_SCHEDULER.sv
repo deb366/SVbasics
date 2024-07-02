@@ -59,7 +59,7 @@ module DEADLINE_SCHEDULER(
             end
 
             // Schedule the task with the closest deadline
-            if (min_index != -1 && tasks[min_index].deadline <= current_time) begin
+            if (min_index != -1 && tasks[min_index].deadline <= current_time) begin  // the task execution is already done
                 task_scheduled <= 1;
                 scheduled_task_id <= tasks[min_index].id;
                 tasks[min_index].valid <= 0;  // Mark this task as processed
