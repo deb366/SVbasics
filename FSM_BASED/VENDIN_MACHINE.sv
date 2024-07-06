@@ -41,4 +41,8 @@ module VENDIN_MACHINE (
       
       GIVE_CHANGE : begin NSTATE = WAITING; end
       REFUND : begin NSTATE = WAITING; end
-  end 
+    endcase
+  end
+
+endmodule
+
