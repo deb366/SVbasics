@@ -16,7 +16,7 @@ module TRAFIC_LIGHT(input logic clk,rstn,output logic O_RED,O_YELLOW,O_GREEN);
     else  begin     
       CSTATE <= NSTATE;
       if (r_count == 7'd69) r_count <= 7'd0;
-      else 					r_count <= r_count + 1; 
+      else                  r_count <= r_count + 1; 
     end 
   end 
   
