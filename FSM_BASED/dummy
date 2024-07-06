@@ -1,1 +1,47 @@
+1. Traffic Light Controller
+Problem: Design a SystemVerilog module for a traffic light controller at a four-way intersection. The FSM should control lights for north-south and east-west directions, ensuring safe traffic management. Include pedestrian signals that request to cross, which must interrupt the normal traffic sequence when activated.
 
+Specifications:
+
+Use a three-color traffic light system (Red, Yellow, Green).
+Pedestrian requests should be handled immediately after the current light cycle completes.
+Implement timers for each light state.
+2. Digital Lock System
+Problem: Implement a digital lock FSM in SystemVerilog that requires a correct sequence of inputs to unlock. The lock should accept a 4-digit code, and each digit is input sequentially.
+
+Specifications:
+
+The FSM should return to the initial state upon a wrong entry at any point.
+Once the correct sequence is entered, an "unlock" signal should be activated.
+After unlocking, the system should reset if another input is received.
+3. Vending Machine Controller
+Problem: Create a SystemVerilog module for a vending machine that accepts coins, selects products, and provides change. Use an FSM to handle various states such as waiting, collecting money, product selection, and change dispensing.
+
+Specifications:
+
+Support at least three different products with different prices.
+Handle exact and excess money scenarios.
+Provide a refund mechanism that can be triggered at any money-collecting state.
+4. Elevator Control System
+Problem: Develop an FSM-based elevator control system in SystemVerilog that manages the movement of an elevator between four floors. Include features for calling the elevator to a floor and selecting a target floor from inside the elevator.
+
+Specifications:
+
+Implement states for moving up, moving down, idle, and emergency stop.
+The elevator should efficiently decide the direction based on current and requested floors.
+Include safety features like door opening only when the elevator is idle at a floor.
+5. Serial Data Receiver
+Problem: Design a SystemVerilog module for an FSM-based serial data receiver that processes incoming data packets framed by start and stop bits. The FSM should verify the correctness of the packet format and handle errors.
+
+Specifications:
+
+Support a simple packet structure: start bit, 8 data bits, parity bit, stop bit.
+Validate the parity and frame correctness.
+On detecting errors, the FSM should signal an error state and discard the packet.
+Guidelines for Implementation:
+Each of these problems can be approached by defining the states clearly and deciding the transitions based on input conditions. Here are general steps to follow:
+
+Identify States: Determine all the necessary states required for the FSM.
+Define Transitions: Outline what conditions lead to state transitions.
+Implement Actions: Specify the actions that occur in each state (e.g., outputs or internal calculations).
+Simulate and Test: After designing the FSM, thoroughly test each scenario to ensure all states transition correctly and handle edge cases effectively.
