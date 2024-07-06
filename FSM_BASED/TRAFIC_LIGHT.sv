@@ -4,27 +4,28 @@
 module TRAFIC_LIGHT(input logic clk,rstn,output logic O_RED,O_YELLOW,O_GREEN);
   
   
-  enum typedef logic [1:0] {RED = 2'd0,YELLOW = 2'd1,GREEN = 2'd2} state_t;
+  typedef enum logic [1:0] {RED = 2'd0,YELLOW = 2'd1,GREEN = 2'd2} state_t;
   state_t CSTATE,NSTATE;
   
+  logic [6:0] r_count;
   always_ff @(posedge clk) begin 
     if(!rstn) begin 
       CSTATE <= RED; 
-      count <= 7'd0;
+      r_count <= 7'd0;
     end 
     else  begin     
       CSTATE <= NSTATE;
-      if (count == 7'd69) count<= 7'd0;
-      else count <= count + 1; 
+      if (r_count == 7'd69) r_count <= 7'd0;
+      else 					r_count <= r_count + 1; 
     end 
   end 
   
   always_comb begin 
-    NSTATE = 'h0;
+    NSTATE = RED;
     case(CSTATE)
-      RED    : begin NSTATE = (count == 7'd39) ? YELLOW : RED end
-      YELLOW : begin NSTATE = (count == 7'd49) ? GREEN : YELLOW end
-      GREEN  : begin NSTATE = (count == 7'd69) ? RED : GREEN end
+      RED    : begin NSTATE = (r_count == 7'd39) ? YELLOW : RED ;end
+      YELLOW : begin NSTATE = (r_count == 7'd49) ? GREEN : YELLOW ; end
+      GREEN  : begin NSTATE = (r_count == 7'd69) ? RED : GREEN ;end
     endcase
   end 
   
