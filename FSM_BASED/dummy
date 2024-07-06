@@ -109,3 +109,7 @@ State Complexity: Break down the system into manageable parts and define states 
 Transitions Logic: Use conditions based on real-time inputs and internal flags to manage complex transitions.
 Modular Design: Build each part of the FSM as a module to simplify testing and maintenance.
 Simulation: Extensively simulate each FSM with various scenarios to ensure all states and transitions are handled as expected.
+
+11. Accumulator 
+Design a simple FSM where the input is I_VALUE 4bit number and I_VALID, the I_VALUE will be accumulated until it gets a I_TERM signal to 
+GIVE the accumulated output(O_SUM) and O_DONE signal .
