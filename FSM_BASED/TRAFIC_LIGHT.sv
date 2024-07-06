@@ -23,9 +23,9 @@ module TRAFIC_LIGHT(input logic clk,rstn,output logic O_RED,O_YELLOW,O_GREEN);
   always_comb begin 
     NSTATE = RED;
     case(CSTATE)
-      RED    : begin NSTATE = (r_count == 7'd39) ? YELLOW : RED ;end
-      YELLOW : begin NSTATE = (r_count == 7'd49) ? GREEN : YELLOW ; end
-      GREEN  : begin NSTATE = (r_count == 7'd69) ? RED : GREEN ;end
+      RED    : begin NSTATE = (r_count == 7'd39) ? YELLOW : RED ;end //wait for count 40
+      YELLOW : begin NSTATE = (r_count == 7'd49) ? GREEN : YELLOW ; end //wait for count 10
+      GREEN  : begin NSTATE = (r_count == 7'd69) ? RED : GREEN ;end //wait for count 20
     endcase
   end 
   
