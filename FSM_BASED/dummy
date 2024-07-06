@@ -1,4 +1,4 @@
-1. Traffic Light Controller
+**1. Traffic Light Controller**
 Problem: Design a SystemVerilog module for a traffic light controller at a four-way intersection. The FSM should control lights for north-south and east-west directions, ensuring safe traffic management. Include pedestrian signals that request to cross, which must interrupt the normal traffic sequence when activated.
 
 Specifications:
