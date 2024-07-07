@@ -1,4 +1,4 @@
-//* Design a SystemVerilog module for an FSM-based serial data receiver that processes incoming data packets framed by start and stop //bits. The FSM should verify the correctness of the packet format and handle errors.
+/* Design a SystemVerilog module for an FSM-based serial data receiver that processes incoming data packets framed by start and stop //bits. The FSM should verify the correctness of the packet format and handle errors.
 
 Specifications:
 
