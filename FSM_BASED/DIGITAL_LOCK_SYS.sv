@@ -1,4 +1,4 @@
-//The I_STREAM will be compared in progressive manner towards the FINAL state
+//Implement a digital lock FSM in SystemVerilog that requires a correct sequence of inputs to unlock. The lock should accept a 4-digit //code, and each digit is input sequentially.
 
 module DIGITAL_LOCK_SYS(input logic clk,rstn,I_STREAM, output logic O_UNLOCKED);
   
