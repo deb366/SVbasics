@@ -5,6 +5,27 @@
 //Include safety features like door opening only when the elevator is idle at a floor.
 
 
+//Develop an FSM-based elevator control system in SystemVerilog that manages the movement of an elevator between four floors. Include features for calling the elevator to a floor and //selecting a target floor from inside the elevator.
+//Specifications:
+//Implement states for moving up, moving down, idle, and emergency stop.
+//The elevator should efficiently decide the direction based on current and requested floors.
+//Include safety features like door opening only when the elevator is idle at a floor.
+
+// **WIP **//
+
+//Develop an FSM-based elevator control system in SystemVerilog that manages the movement of an elevator between four floors. Include features for calling the elevator to a floor and //selecting a target floor from inside the elevator.
+//Specifications:
+//Implement states for moving up, moving down, idle, and emergency stop.
+//The elevator should efficiently decide the direction based on current and requested floors.
+//Include safety features like door opening only when the elevator is idle at a floor.
+
+// **WIP **//
+//Develop an FSM-based elevator control system in SystemVerilog that manages the movement of an elevator between four floors. Include features for calling the elevator to a floor and //selecting a target floor from inside the elevator.
+//Specifications:
+//Implement states for moving up, moving down, idle, and emergency stop.
+//The elevator should efficiently decide the direction based on current and requested floors.
+//Include safety features like door opening only when the elevator is idle at a floor.
+
 
 module ELEVATOR (input logic clk,rstn,
                  input logic [3:0] I_DEST_FLOOR,
@@ -25,9 +46,9 @@ module ELEVATOR (input logic clk,rstn,
       CSTATE <= IDLE;
     end 
     else begin 
-      case (NSTATE)
-        MOVING_UP   : r_current_floor <= r_current_floor + 1;
-        MOVING_DOWN : r_current_floor <= r_current_floor - 1;
+      case (CSTATE)
+        MOVING_UP   : r_current_floor <= w_dst_reached ? r_current_floor : r_current_floor + 1;
+        MOVING_DOWN : r_current_floor <= w_dst_reached ? r_current_floor : r_current_floor - 1;
         IDLE        : r_dest_floor    <= w_dst_reached ? I_DEST_FLOOR : r_dest_floor;
         default     : r_current_floor <= r_current_floor; 
       endcase
