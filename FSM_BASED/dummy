@@ -113,3 +113,6 @@ Simulation: Extensively simulate each FSM with various scenarios to ensure all s
 11. Accumulator 
 Design a simple FSM where the input is I_VALUE 4bit number and I_VALID, the I_VALUE will be accumulated until it gets a I_TERM signal to 
 GIVE the accumulated output(O_SUM) and O_DONE signal .
+
+12. Realtime ALU
+Design a simple FSM where the current value at the register A needs tobe added,substracted, multiplied, divided based on the input I_INSTRUCTION(2bit), I_IN_DATA(8bit), I_VALID. The I_VALID will be high only when the O_READY is asserted. 
