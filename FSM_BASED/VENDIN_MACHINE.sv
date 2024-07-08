@@ -5,7 +5,7 @@
 //Handle exact and excess money scenarios.
 //Provide a refund mechanism that can be triggered at any money-collecting state.
 
-//** WIP **//
+
 module VendingMachine(
     input logic clk,
     input logic rstn,
