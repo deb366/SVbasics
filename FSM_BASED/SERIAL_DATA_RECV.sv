@@ -1,3 +1,4 @@
+
 /* Design a SystemVerilog module for an FSM-based serial data receiver that processes incoming data packets framed by start and stop //bits. The FSM should verify the correctness of the packet format and handle errors.
 
 Specifications:
@@ -7,7 +8,6 @@ Validate the parity and frame correctness.
 On detecting errors, the FSM should signal an error state and discard the packet.
 
 */
-// WIP //
 
 module SERIAL_DATA_RECV(input logic clk,rstn,I_SERIAL_DATA,output logic O_ERROR);
   
@@ -29,7 +29,7 @@ module SERIAL_DATA_RECV(input logic clk,rstn,I_SERIAL_DATA,output logic O_ERROR)
       case(CSTATE)
         DATA_CHECK: begin 
           r_count <= r_count + 1;
-          r_parity <= ((r_count>4'd0) && (r_count<4'd9)) ? (r_parity ^ I_SERIAL_DATA) : r_parity;
+          r_parity <= ((r_count>=4'd0) && (r_count<4'd8)) ? (r_parity ^ I_SERIAL_DATA) : r_parity;
         end 
         PARITY_CHECK: r_count <= r_count + 1;
         IDLE: begin r_count= '0; r_parity = '0; end 
@@ -39,17 +39,22 @@ module SERIAL_DATA_RECV(input logic clk,rstn,I_SERIAL_DATA,output logic O_ERROR)
     
   end 
   always_comb begin 
-    O_ERROR = 0;
+    O_ERROR = 0;//w_error = 0;
+    NSTATE = state_t'(0);
     case(CSTATE)
       IDLE: begin NSTATE = (I_SERIAL_DATA && (~|r_count)) ? DATA_CHECK : IDLE; end
       DATA_CHECK: begin 
-        NSTATE = (r_count== 4'd8) ? PARITY_CHECK : DATA_CHECK;
-        w_error = (I_SERIAL_DATA != r_parity) && (r_count == 4'd9);
+        NSTATE = (r_count== 4'd7) ? PARITY_CHECK : DATA_CHECK;
+        
       end 
-      PARITY_CHECK: begin NSTATE = w_error ? ERROR : CORRECT ; end 
+      PARITY_CHECK: begin 
+        NSTATE = w_error ? ERROR : CORRECT ; 
+        //w_error = (I_SERIAL_DATA != r_parity) && (r_count == 4'd8);
+      end 
       CORRECT: begin NSTATE = IDLE; O_ERROR = 0 ; end 
       ERROR:   begin NSTATE = IDLE; O_ERROR = 1 ; end
     endcase
   end 
   
+  assign w_error = (I_SERIAL_DATA != r_parity) && (r_count == 4'd8);
 endmodule 
