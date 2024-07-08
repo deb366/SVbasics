@@ -1,0 +1,33 @@
+/*
+Autonomous Mobile Robot Navigation
+Basic Navigation States
+Idle: The robot is stationary, not currently engaged in active navigation or tasks.
+Moving: The robot is actively moving towards a designated target location.
+Pause: The robot temporarily stops moving, perhaps due to an external command or operational assessment.
+Obstacle Detection and Avoidance States
+Obstacle Detected: Sensors identify an obstacle in the robot's path.
+Calculating Detour: The robot calculates an alternative route to circumvent the obstacle.
+Avoiding Obstacle: The robot navigates according to the detour to avoid the obstacle.
+Obstacle Cleared: The robot has successfully navigated past the obstacle.
+Realigning to Path: The robot adjusts its trajectory to re-align with its original or a newly calculated path.
+Resume Navigation: The robot resumes its journey towards the target on the realigned path.
+Straight Path Check: The robot evaluates if a straight path is viable for continuing towards the target without further deviations.
+Path Optimization: The robot optimizes its route based on updated environmental data and conditions.
+Task Management States
+Task Assigned: The robot receives and prioritizes a new task.
+Task Active: The robot is engaged in executing the current task.
+Task Completed: The robot has finished the assigned task and updates the task status or queue.
+Error Recovery and System Malfunctions States
+Error Detection: An error or malfunction is identified (sensor failure, navigation error, etc.).
+Attempting Recovery: The robot attempts to correct the detected error or switch to a backup system.
+Recovery Failed: Attempts to fix the error have failed; the robot may require human intervention.
+Recovery Succeeded: The robot has successfully corrected the error and returns to normal operation.
+Power Management States
+Monitor Battery: Ongoing monitoring of the battery level during operations.
+Low Battery: The battery level is critically low; the robot needs to return to the charging station.
+Charging: The robot is connected to a charging station and is recharging.
+Charged: The robot is fully charged and ready to resume or start new tasks.
+*/
+module Auto_MRobot_Nav();
+  
+endmodule
