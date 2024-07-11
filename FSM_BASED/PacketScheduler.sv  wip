@@ -118,20 +118,6 @@ endmodule
 //+++++++++++++++++++++++++++++++++ Approach 2
 // The buffers are updated in sequenctial manner 
 
-// Code your design here
-/*
-Create a SystemVerilog module for a network packet scheduler that uses an FSM to manage packet queuing and transmission based on priority and type. The FSM should handle different network conditions dynamically.
-
-Specifications:
-
-Multiple queues for different types of traffic (e.g., VoIP, streaming, data).
-Dynamic adjustment based on bandwidth availability.
-Error handling for packet loss or corruption.
-States to manage congestion and optimize throughput.
-Prioritization mechanism for critical data packets.
-*/
-//WIP - ERROR, CONGESTION is remaining 
-
 module PacketScheduler(
     input logic clk,
     input logic reset,
