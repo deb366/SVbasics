@@ -116,3 +116,25 @@ GIVE the accumulated output(O_SUM) and O_DONE signal .
 
 12. Realtime ALU
 Design a simple FSM where the current value at the register A needs tobe added,substracted, multiplied, divided based on the input I_INSTRUCTION(2bit), I_IN_DATA(8bit), I_VALID. The I_VALID will be high only when the O_READY is asserted. 
+
+13. Objective: Design and implement a temperature control system in SystemVerilog for a server room. The system must use a hysteresis counter to efficiently manage the operation of cooling units, ensuring the temperature is maintained within a specific range to optimize server performance and reliability.
+
+Specifications:
+
+Temperature Monitoring: The system should continuously monitor the room temperature.
+
+Hysteresis Control:
+
+Upper Threshold (UT): If the temperature exceeds this value, the cooling units should be activated.
+Lower Threshold (LT): Once activated, the cooling units should continue to operate until the temperature drops below this value. This prevents frequent toggling of the cooling units, reducing wear and tear.
+Cooling Unit Control:
+
+Implement output signals to control the on and off states of the cooling units.
+System States:
+
+Cooling Off: State when cooling is not required. Monitors temperature until it exceeds the upper threshold.
+Cooling On: Activates when the temperature exceeds the upper threshold and remains until the temperature falls below the lower threshold.
+Inputs and Outputs:
+
+Input: Temperature sensor reading.
+Output: Cooling unit control signal.
