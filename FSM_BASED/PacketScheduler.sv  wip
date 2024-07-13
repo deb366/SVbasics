@@ -11,8 +11,8 @@ States to manage congestion and optimize throughput.
 Prioritization mechanism for critical data packets.
 */
 //WIP - ERROR, CONGESTION is remaining , 
-//immediate transition to other steam_type shd work
 
+//immediate transition to other steam_type shd work
 
 module PacketScheduler(
     input logic clk,
@@ -20,13 +20,14 @@ module PacketScheduler(
     input logic[1:0] stream_type,  // 2-bit signal for data type
     input i_valid,
     input logic[7:0] data_in,      // Incoming data byte
-  output logic[127:0] data_out,    // Outgoing data packet
-    output logic valid_out         // Signal to indicate data out is valid
+    output logic[127:0] data_out,    // Outgoing data packet
+    output logic O_valid,         // Signal to indicate data out is valid
+  output logic [1:0] O_current_type
 );
 
     typedef enum logic[2:0] {
         IDLE = 3'b000,
-        VOIP = 3'b001,
+        VOIP = 3'b001,      
         STREAMING = 3'b010,
         DATA = 3'b011
         //ERROR = 3'b100,
@@ -41,6 +42,9 @@ module PacketScheduler(
   logic [7:0] r_voip_count;
   logic [7:0] r_data_count,r_data;
   logic w_voip_done,w_data_done,r_valid;
+  logic w_valid_out,r_valid_out;
+  logic [1:0] w_current_type;
+  logic [1:0] r_current_type;  
 
     always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
@@ -51,20 +55,29 @@ module PacketScheduler(
             data_buffer <= 0;
             r_valid <= 0;
             r_data <= '0;
+            //data_out <= '0; // Send byte by byte
+            //valid_out <= '0;           
         end else begin
             CSTATE <= i_valid ? NSTATE : CSTATE;
             r_valid <= i_valid;
             r_data <= data_in;
           case(CSTATE)
             IDLE: begin r_voip_count <= '0; r_data_count <= '0; end
-            STREAMING: begin /*r_byte_count <= '0;*/ end 
+            STREAMING: begin /*r_byte_count <= '0;*/ 
+            //data_out <= r_data; // Send byte by byte
+            //valid_out <= r_valid;                        
+            end 
             VOIP: begin 
               r_voip_count <= w_voip_done ? '0 : i_valid && (stream_type==2'd0) ? r_voip_count + 1 : r_voip_count;
               voip_buffer[r_voip_count*8 +: 8] <= r_valid ? r_data : voip_buffer[r_voip_count*8 +: 8];
+              //data_out  <= w_voip_done ? voip_buffer : '0;  
+              //valid_out <= w_voip_done; 
             end 
             DATA: begin 
               r_data_count <= w_data_done ? '0 : i_valid && (stream_type==2'd2) ? r_data_count + 1 : r_data_count;
               data_buffer[r_data_count*8 +: 8] <= r_valid ? r_data : data_buffer[r_data_count*8 +: 8];
+              //data_out <= w_data_done ? data_buffer : '0; // Send all at once
+              //valid_out <= w_data_done;              
             end 
           endcase
         end
@@ -78,7 +91,7 @@ module PacketScheduler(
       //NSTATE = state_t'('0);
       case (CSTATE)
             IDLE: begin
-              valid_out = 0;
+              //valid_out = 0;
               case ({stream_type,i_valid})
                     3'b001: NSTATE = VOIP;
                     3'b011: NSTATE = STREAMING;
@@ -89,10 +102,10 @@ module PacketScheduler(
             VOIP: begin
               //voip_buffer[r_byte_count*8 +: 8] = data_in;
                 //byte_count++;
-              valid_out = 0;
-              if ((r_voip_count == 8) && i_valid) begin
-                    data_out = voip_buffer; // Send all at once
-                    valid_out = 1;                    
+              //valid_out = 0;
+              if ((r_voip_count == 7) && i_valid) begin
+                    //data_out = voip_buffer; // Send all at once
+                    //valid_out = 1;                    
                     NSTATE = IDLE;
                 end
               else if(i_valid && stream_type==2'b01) begin 
@@ -108,8 +121,8 @@ module PacketScheduler(
                 //NSTATE = IDLE;
               if(i_valid && stream_type==2'b01) begin 
                 NSTATE = STREAMING;
-                data_out = data_in; // Send byte by byte
-                valid_out = 1;
+                //data_out = data_in; // Send byte by byte
+                //valid_out = 1;
               end  
               else if(i_valid && stream_type==2'b00) begin 
                 NSTATE = VOIP;
@@ -120,11 +133,11 @@ module PacketScheduler(
             end
             DATA: begin
               //data_buffer[r_byte_count*8 +: 8] = data_in;
-              valid_out = 0;
+              //valid_out = 0;
                 //byte_count++;
-              if ((r_data_count == 16) && i_valid) begin
-                    data_out = data_buffer; // Send all at once
-                    valid_out = 1;
+              if ((r_data_count == 15) && i_valid) begin
+                    //data_out = data_buffer; // Send all at once
+                    //valid_out = 1;
                     //r_byte_count = 0;
                     NSTATE = IDLE;
                 end
@@ -147,8 +160,23 @@ module PacketScheduler(
             */
         endcase
     end
-  
-  assign w_voip_done = (CSTATE == VOIP) && (r_voip_count == 8'd8);
-  assign w_data_done = (CSTATE == DATA) && (r_data_count == 8'd16);
+  always_ff @(posedge clk)begin 
+    if(reset) begin 
+      r_valid_out <= '0;
+      r_current_type <= '0;
+    end 
+    else if (w_valid_out ^ r_valid_out)  begin 
+      r_valid_out <= w_valid_out;
+      r_current_type <= w_current_type;
+    end 
+  end 
+    
+  assign w_voip_done = (CSTATE == VOIP) && (r_voip_count == 8'd7);
+  assign w_data_done = (CSTATE == DATA) && (r_data_count == 8'd15);
+  assign data_out = (CSTATE == VOIP) ? voip_buffer : (CSTATE == DATA) ? data_buffer : (CSTATE == STREAMING) ? r_data : '0;
+  assign w_valid_out = (CSTATE == VOIP) ? w_voip_done : (CSTATE == DATA) ? w_data_done : (CSTATE == STREAMING) ? r_valid : 1'd0;
+  assign w_current_type = ((CSTATE == VOIP) && w_voip_done) ? 2'd0 : ((CSTATE == STREAMING) && r_valid) ? 2'd1 : ((CSTATE == DATA) && w_data_done) ? 2'd2 : 2'd0;
+  assign O_valid = (CSTATE == STREAMING) ? r_valid :  r_valid_out;
+  assign O_current_type = (CSTATE == STREAMING) ? w_current_type : r_current_type; //for streaming the 1 clk delay isnt req
 
 endmodule
