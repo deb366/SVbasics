@@ -1,7 +1,5 @@
 // The stabilizer would keep the current temperature(r_cnt) within the two thereshold levels.
 
-// Code your design here
-
 module TEMP_STABILIZER(
 	input logic clk,rstn,
     input logic [7:0] I_TEMP,
