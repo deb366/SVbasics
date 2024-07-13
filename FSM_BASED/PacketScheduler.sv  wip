@@ -149,18 +149,7 @@ endmodule
 
 //---------------------updated 
 
-/*
-Create a SystemVerilog module for a network packet scheduler that uses an FSM to manage packet queuing and transmission based on priority and type. The FSM should handle different network conditions dynamically.
 
-Specifications:
-
-Multiple queues for different types of traffic (e.g., VoIP, streaming, data).
-Dynamic adjustment based on bandwidth availability.
-Error handling for packet loss or corruption.
-States to manage congestion and optimize throughput.
-Prioritization mechanism for critical data packets.
-*/
-//WIP - ERROR, CONGESTION is remaining , stream_type transition shd work 
 
 module PacketScheduler(
     input logic clk,
@@ -207,11 +196,11 @@ module PacketScheduler(
             IDLE: begin r_voip_count <= '0; r_data_count <= '0; end
             STREAMING: begin /*r_byte_count <= '0;*/ end 
             VOIP: begin 
-              r_voip_count <= w_voip_done ? '0 : i_valid ? r_voip_count + 1 : r_voip_count;
+              r_voip_count <= w_voip_done ? '0 : i_valid && (stream_type==2'd0) ? r_voip_count + 1 : r_voip_count;
               voip_buffer[r_voip_count*8 +: 8] <= r_valid ? r_data : voip_buffer[r_voip_count*8 +: 8];
             end 
             DATA: begin 
-              r_data_count <= w_data_done ? '0 : i_valid ? r_data_count + 1 : r_data_count;
+              r_data_count <= w_data_done ? '0 : i_valid && (stream_type==2'd2) ? r_data_count + 1 : r_data_count;
               data_buffer[r_data_count*8 +: 8] <= r_valid ? r_data : data_buffer[r_data_count*8 +: 8];
             end 
           endcase
@@ -238,7 +227,7 @@ module PacketScheduler(
               //voip_buffer[r_byte_count*8 +: 8] = data_in;
                 //byte_count++;
               valid_out = 0;
-              if ((r_voip_count == 8) && i_valid && (stream_type==2'b00)) begin
+              if ((r_voip_count == 8) && i_valid) begin
                     data_out = voip_buffer; // Send all at once
                     valid_out = 1;                    
                     NSTATE = IDLE;
@@ -270,7 +259,7 @@ module PacketScheduler(
               //data_buffer[r_byte_count*8 +: 8] = data_in;
               valid_out = 0;
                 //byte_count++;
-              if ((r_data_count == 16) && i_valid && (stream_type==2'b10)) begin
+              if ((r_data_count == 16) && i_valid) begin
                     data_out = data_buffer; // Send all at once
                     valid_out = 1;
                     //r_byte_count = 0;
