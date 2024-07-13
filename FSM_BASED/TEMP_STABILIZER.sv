@@ -24,7 +24,7 @@ always_ff @(posedge clk) begin
   else      begin 
     CSTATE<= NSTATE;
     case(CSTATE)
-      IDLE : begin r_cnt <= I_TEMP; end 
+      IDLE : begin r_cnt <= I_TEMP; end   //means this is the current temp
       CNT_UP : begin r_cnt <= r_cnt + 1; end 
       CNT_DWN : begin r_cnt <= r_cnt - 1; end 
     endcase
