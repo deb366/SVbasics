@@ -83,7 +83,7 @@ Error handling for packet loss or corruption.
 States to manage congestion and optimize throughput.
 Prioritization mechanism for critical data packets.
 
-9. Smart Home Security System
+9. Smart Home Security System  --DONE
 Problem: Develop an FSM-based smart home security system in SystemVerilog. The system should manage various sensors (motion, window/door, smoke) and make decisions based on the input from these devices.
 
 Specifications:
@@ -94,10 +94,10 @@ Integration with external services (police, fire department).
 User interface states for setting up and configuring the system.
 Logging and error handling states.
 
-10. Autonomous Mobile Robot Navigation
+10. Autonomous Mobile Robot Navigation --DONE
 Problem: Design a SystemVerilog module for an FSM controlling an autonomous mobile robot in a dynamic environment. The FSM should handle navigation, obstacle avoidance, and task completion, such as delivering items within a building.
 
-Specifications:
+Specifications: 
 
 States for different navigation strategies based on sensor inputs.
 Collision detection and avoidance states.
