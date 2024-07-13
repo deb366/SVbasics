@@ -14,13 +14,15 @@ Prioritization mechanism for critical data packets.
 
 //immediate transition to other steam_type shd work
 
+
+
 module PacketScheduler(
     input logic clk,
     input logic reset,
     input logic[1:0] stream_type,  // 2-bit signal for data type
     input i_valid,
     input logic[7:0] data_in,      // Incoming data byte
-    output logic[127:0] data_out,    // Outgoing data packet
+  output logic[127:0] O_data,    // Outgoing data packet
     output logic O_valid,         // Signal to indicate data out is valid
   output logic [1:0] O_current_type
 );
@@ -173,7 +175,7 @@ module PacketScheduler(
     
   assign w_voip_done = (CSTATE == VOIP) && (r_voip_count == 8'd7);
   assign w_data_done = (CSTATE == DATA) && (r_data_count == 8'd15);
-  assign data_out = (CSTATE == VOIP) ? voip_buffer : (CSTATE == DATA) ? data_buffer : (CSTATE == STREAMING) ? r_data : '0;
+  assign O_data = (CSTATE == VOIP) ? voip_buffer : (CSTATE == DATA) ? data_buffer : (CSTATE == STREAMING) ? r_data : '0;
   assign w_valid_out = (CSTATE == VOIP) ? w_voip_done : (CSTATE == DATA) ? w_data_done : (CSTATE == STREAMING) ? r_valid : 1'd0;
   assign w_current_type = ((CSTATE == VOIP) && w_voip_done) ? 2'd0 : ((CSTATE == STREAMING) && r_valid) ? 2'd1 : ((CSTATE == DATA) && w_data_done) ? 2'd2 : 2'd0;
   assign O_valid = (CSTATE == STREAMING) ? r_valid :  r_valid_out;
