@@ -1,3 +1,5 @@
+// The stabilizer would keep the current temperature(r_cnt) within the two thereshold levels.
+
 // Code your design here
 
 module TEMP_STABILIZER(
@@ -9,7 +11,7 @@ module TEMP_STABILIZER(
   output logic [7:0] O_TEMP
 );
 
-  logic [7:0] r_cnt,r_updated;
+  logic [7:0] r_cnt;
   typedef enum logic [1:0] {IDLE=2'd0,CNT_UP=2'd1,CNT_DWN=2'd2} state_t;
   state_t CSTATE,NSTATE;
   logic w_be_stable;
@@ -17,13 +19,12 @@ module TEMP_STABILIZER(
 always_ff @(posedge clk) begin 
   if(!rstn) begin 
     CSTATE<= IDLE;
-    r_updated <= '0;
     r_cnt <= '0;
   end 
   else      begin 
     CSTATE<= NSTATE;
     case(CSTATE)
-      IDLE : begin r_updated <= I_TEMP; end 
+      IDLE : begin r_cnt <= I_TEMP; end 
       CNT_UP : begin r_cnt <= r_cnt + 1; end 
       CNT_DWN : begin r_cnt <= r_cnt - 1; end 
     endcase
@@ -33,9 +34,9 @@ end
 
 always_comb begin 
   case(CSTATE)
-    IDLE    : begin NSTATE = (r_updated > THES_UP) ? CNT_DWN : (r_updated < THES_DWN) ? CNT_UP : IDLE; end
-    CNT_UP  : begin NSTATE = w_be_stable ? IDLE : CNT_UP ; end 
-    CNT_DWN : begin NSTATE = w_be_stable ? IDLE : CNT_DWN ; end 
+    IDLE    : begin NSTATE = (r_cnt > THES_UP) ? CNT_DWN : (r_cnt < THES_DWN) ? CNT_UP : IDLE; end
+    CNT_UP  : begin NSTATE = w_be_stable ? IDLE : (r_cnt > THES_UP)  ? CNT_DWN : CNT_UP ; end 
+    CNT_DWN : begin NSTATE = w_be_stable ? IDLE : (r_cnt < THES_DWN) ? CNT_UP  : CNT_DWN ; end 
   endcase
 end
   
