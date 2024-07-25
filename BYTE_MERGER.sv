@@ -1,6 +1,6 @@
 //2 input BYTE is merged to form the 2BYTE output , it can be extended to 2 BYTE merger just by limiting the max count value 
 
-module byte_merger(
+module BYTE_MERGER(
   input logic clk,rstn,
   input logic [7:0] I_DATA,
   input logic I_VALID,
