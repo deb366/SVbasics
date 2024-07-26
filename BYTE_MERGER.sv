@@ -1,4 +1,4 @@
-//2 input BYTE is merged to form the 2BYTE output , it can be extended to 2 BYTE merger just by limiting the max count value 
+//2 input BYTE is merged to form the 2BYTE output , it can be extended to nBYTE merger just by limiting the max count value 
 
 module BYTE_MERGER(
   input logic clk,rstn,
