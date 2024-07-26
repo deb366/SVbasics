@@ -21,6 +21,7 @@ endmodule
 
 //+++++++++++++++++++++++++++++++++//
 //2 output at the same time
+//Just make the future 2 terms depends on the present terms 
 //+++++++++++++++++++++++++++++++++//
 module FIBONACCII(input logic clk,rstn,output logic [7:0] r_a1, r_a0);
  // logic [7:0] r_a0,r_a1;
