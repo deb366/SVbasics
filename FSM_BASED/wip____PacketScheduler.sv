@@ -1,4 +1,3 @@
-
 /*
 Create a SystemVerilog module for a network packet scheduler that uses an FSM to manage packet queuing and transmission based on priority and type. The FSM should handle different network conditions dynamically.
 
@@ -42,7 +41,7 @@ module PacketScheduler(
     logic[63:0] voip_buffer;
     logic[127:0] data_buffer;
   logic [7:0] r_voip_count;
-  logic [7:0] r_data_count,r_data;
+  logic [7:0] r_data_count,r_data,r_data_d1;
   logic w_voip_done,w_data_done,r_valid;
   logic w_valid_out,r_valid_out;
   logic [1:0] w_current_type;
@@ -57,17 +56,21 @@ module PacketScheduler(
             data_buffer <= 0;
             r_valid <= 0;
             r_data <= '0;
+            r_data_d1 <= '0;
             //data_out <= '0; // Send byte by byte
             //valid_out <= '0;           
-        end else begin
-            CSTATE <= i_valid ? NSTATE : CSTATE;
+        end 
+      else begin
+            //CSTATE <= i_valid ? NSTATE : CSTATE;
+            CSTATE <= NSTATE;
             r_valid <= i_valid;
             r_data <= data_in;
           case(CSTATE)
             IDLE: begin r_voip_count <= '0; r_data_count <= '0; end
             STREAMING: begin /*r_byte_count <= '0;*/ 
             //data_out <= r_data; // Send byte by byte
-            //valid_out <= r_valid;                        
+            //valid_out <= r_valid;    
+              r_data_d1 <= r_data;
             end 
             VOIP: begin 
               r_voip_count <= w_voip_done ? '0 : i_valid && (stream_type==2'd0) ? r_voip_count + 1 : r_voip_count;
@@ -105,17 +108,19 @@ module PacketScheduler(
               //voip_buffer[r_byte_count*8 +: 8] = data_in;
                 //byte_count++;
               //valid_out = 0;
-              if ((r_voip_count == 7) && i_valid) begin
+              if ((r_voip_count == 7) && r_valid) begin
                     //data_out = voip_buffer; // Send all at once
                     //valid_out = 1;                    
                     NSTATE = IDLE;
                 end
-              else if(i_valid && stream_type==2'b01) begin 
+              else if(r_valid && stream_type==2'b01) begin 
                 NSTATE = STREAMING;
               end 
-              else if(i_valid && stream_type==2'b10) begin 
+              else if(r_valid && stream_type==2'b10) begin 
                 NSTATE = DATA;
               end 
+              else 
+                NSTATE = VOIP;
             end
             STREAMING: begin
                 //data_out = data_in; // Send byte by byte
@@ -132,23 +137,27 @@ module PacketScheduler(
               else if(i_valid && stream_type==2'b10) begin 
                 NSTATE = DATA;
               end 
+              else 
+                NSTATE = STREAMING; 
             end
             DATA: begin
               //data_buffer[r_byte_count*8 +: 8] = data_in;
               //valid_out = 0;
                 //byte_count++;
-              if ((r_data_count == 15) && i_valid) begin
+              if ((r_data_count == 15) && r_valid) begin
                     //data_out = data_buffer; // Send all at once
                     //valid_out = 1;
                     //r_byte_count = 0;
                     NSTATE = IDLE;
                 end
-              else if(i_valid && stream_type==2'b00) begin 
+              else if(r_valid && stream_type==2'b00) begin 
                 NSTATE = VOIP;
               end 
-              else if(i_valid && stream_type==2'b01) begin 
+              else if(r_valid && stream_type==2'b01) begin 
                 NSTATE = STREAMING;
               end 
+              else 
+                NSTATE = DATA;
             end
           /*
             ERROR: begin
@@ -175,7 +184,8 @@ module PacketScheduler(
     
   assign w_voip_done = (CSTATE == VOIP) && (r_voip_count == 8'd7);
   assign w_data_done = (CSTATE == DATA) && (r_data_count == 8'd15);
-  assign O_data = (CSTATE == VOIP) ? voip_buffer : (CSTATE == DATA) ? data_buffer : (CSTATE == STREAMING) ? r_data : '0;
+  //assign O_data = (CSTATE == VOIP) ? voip_buffer : (CSTATE == DATA) ? data_buffer : (CSTATE == STREAMING) ? r_data : '0;
+  assign O_data = (O_current_type == 2'h0) ? voip_buffer : (O_current_type == 2'h1) ? r_data_d1 : (O_current_type == 2'h2) ? data_buffer : '0;
   assign w_valid_out = (CSTATE == VOIP) ? w_voip_done : (CSTATE == DATA) ? w_data_done : (CSTATE == STREAMING) ? r_valid : 1'd0;
   assign w_current_type = ((CSTATE == VOIP) && w_voip_done) ? 2'd0 : ((CSTATE == STREAMING) && r_valid) ? 2'd1 : ((CSTATE == DATA) && w_data_done) ? 2'd2 : 2'd0;
   assign O_valid = (CSTATE == STREAMING) ? r_valid :  r_valid_out;
