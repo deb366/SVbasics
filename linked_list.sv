@@ -1,6 +1,3 @@
-/*
-The code needs updates for pop operation.
-*/
 
 module linked_list #(parameter DATA_WIDTH = 8, SIZE = 10)
 (
