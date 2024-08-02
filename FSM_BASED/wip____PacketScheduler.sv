@@ -58,20 +58,14 @@ module PacketScheduler(
             r_data <= '0;
             r_data_d1 <= '0;
             O_valid<=0;
-            O_current_type <= '0;
-            //data_out <= '0; // Send byte by byte
-            //valid_out <= '0;           
+            O_current_type <= '0;        
         end 
       else begin
             //CSTATE <= i_valid ? NSTATE : CSTATE;
             CSTATE <= NSTATE;
-            //r_valid <= i_valid;
-            //r_data <= data_in;
         case(NSTATE)
             IDLE: begin r_voip_count <= '0; r_data_count <= '0; O_valid<= '0; O_current_type<='0; end
-            STREAMING: begin /*r_byte_count <= '0;*/ 
-            //data_out <= r_data; // Send byte by byte
-            //valid_out <= r_valid;    
+            STREAMING: begin /*r_byte_count <= '0;*/   
               r_data <= data_in;
               r_valid <= i_valid;
               
@@ -81,17 +75,13 @@ module PacketScheduler(
             VOIP: begin 
               r_voip_count <= w_voip_done ? '0 : i_valid && (stream_type==2'd0) ? r_voip_count + 1 : r_voip_count;
               voip_buffer[r_voip_count*8 +: 8] <= i_valid ? data_in : voip_buffer[r_voip_count*8 +: 8];
-              //data_out  <= w_voip_done ? voip_buffer : '0;  
-              //valid_out <= w_voip_done;
               O_valid <= (r_voip_count == 7) && i_valid ? 1'b1 : 0;
               O_current_type <= (r_voip_count == 7) && i_valid ? 2'b00 : 2'b00;
               
             end 
             DATA: begin 
               r_data_count <= w_data_done ? '0 : i_valid && (stream_type==2'd2) ? r_data_count + 1 : r_data_count;
-              data_buffer[r_data_count*8 +: 8] <= i_valid ? data_in : data_buffer[r_data_count*8 +: 8];
-              //data_out <= w_data_done ? data_buffer : '0; // Send all at once
-              //valid_out <= w_data_done;      
+              data_buffer[r_data_count*8 +: 8] <= i_valid ? data_in : data_buffer[r_data_count*8 +: 8];    
               O_valid <= (r_data_count == 15) && i_valid ? 1'b1 : 0;
               O_current_type <= (r_data_count == 15) && i_valid ? 2'b10 : 2'b00;              
             end 
