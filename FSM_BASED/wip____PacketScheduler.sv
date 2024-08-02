@@ -9,11 +9,8 @@ Error handling for packet loss or corruption.
 States to manage congestion and optimize throughput.
 Prioritization mechanism for critical data packets.
 */
+
 //WIP - ERROR, CONGESTION is remaining , 
-
-//immediate transition to other steam_type shd work
-
-
 
 module PacketScheduler(
     input logic clk,
