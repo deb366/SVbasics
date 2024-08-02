@@ -1,5 +1,3 @@
-// Code your design here
-
 /*
 Create a SystemVerilog module for a network packet scheduler that uses an FSM to manage packet queuing and transmission based on priority and type. The FSM should handle different network conditions dynamically.
 
@@ -119,14 +117,16 @@ module PacketScheduler(
               else if(i_valid && stream_type==2'b10) begin 
                 NSTATE = DATA;
               end 
-              else if (i_valid && stream_type==2'b00) begin                 
-                    NSTATE = VOIP;
-              end              
-              else 
+            
+              else if (!i_valid && O_valid) 
                 NSTATE = IDLE;
-            end
-            STREAMING: begin
-  
+           
+              else /*if (i_valid && stream_type==2'b00) */begin                 
+                    NSTATE = VOIP;
+              end  
+            end 
+        
+            STREAMING: begin  
               if(i_valid && stream_type==2'b00) begin 
                 NSTATE = VOIP;
               end 
@@ -136,22 +136,25 @@ module PacketScheduler(
               else if(i_valid && stream_type==2'b01) begin 
                 NSTATE = STREAMING;
               end              
-              else 
+              else if (!i_valid && O_valid) begin 
                 NSTATE = IDLE; 
+              end
             end
+        
             DATA: begin
               if(i_valid && stream_type==2'b00) begin 
                 NSTATE = VOIP;
               end 
               else if(i_valid && stream_type==2'b01) begin 
                 NSTATE = STREAMING;
-              end
-              else if (i_valid && stream_type==2'b10) begin
-                    NSTATE = DATA;
-                end              
-              else 
+              end              
+              else if (!i_valid && O_valid) begin 
                 NSTATE = IDLE;
-            end
+              end
+              else /*(i_valid && stream_type==2'b10) */begin
+                    NSTATE = DATA;
+              end        
+            end 
           /*
             ERROR: begin
                 // Handle error
@@ -166,11 +169,129 @@ module PacketScheduler(
     end
 
     
-  assign w_voip_done = (CSTATE == VOIP) && (r_voip_count == 8'd7);
-  assign w_data_done = (CSTATE == DATA) && (r_data_count == 8'd15);
+  assign w_voip_done = i_valid && (CSTATE == VOIP) && (r_voip_count == 8'd7);
+  assign w_data_done = i_valid && (CSTATE == DATA) && (r_data_count == 8'd15);
   assign O_data = (O_current_type == 2'h0) ? voip_buffer : (O_current_type == 2'h1) ? r_data : (O_current_type == 2'h2) ? data_buffer : '0;
   
 
 endmodule
+
+//+++++++++++++++++++++++++++++++++//
+//++++++++++ Test Bench +++++++++++//
+//+++++++++++++++++++++++++++++++++//
+`timescale 1ns / 1ps
+
+module tb_PacketScheduler;
+
+  logic clk;
+  logic reset;
+  logic [1:0] stream_type;
+  logic i_valid;
+  logic [7:0] data_in;
+  logic [127:0] O_data;
+  logic O_valid;
+  logic [1:0] O_current_type;
+
+  // Instance of PacketScheduler
+  PacketScheduler uut (
+    .clk(clk),
+    .reset(reset),
+    .stream_type(stream_type),
+    .i_valid(i_valid),
+    .data_in(data_in),
+    .O_data(O_data),
+    .O_valid(O_valid),
+    .O_current_type(O_current_type)
+  );
+
+  // Clock generation
+  always #1 clk = ~clk; // 100MHz clock
+
+  // Stimulus
+  initial begin
+    clk = 0;
+    reset = 1;
+    i_valid = 0;
+    stream_type = 0;
+    data_in = 0;
+    #10;
+    reset = 0;
+
+    // Send VoIP data
+    @(posedge clk);
+    send_data(2'b00, 8'hAA);
+    send_data(2'b00, 8'hBB);
+    send_data(2'b00, 8'hCC);
+    send_data(2'b00, 8'hDD);
+    send_data(2'b00, 8'hEE);
+    send_data(2'b00, 8'hFF);
+    send_data(2'b00, 8'h11);
+    send_data(2'b00, 8'h22);
+
+    // Send Streaming data
+    @(posedge clk);
+    send_data(2'b01, 8'h99);
+
+    // Send Data packets
+    @(posedge clk);
+    for (int i = 0; i < 16; i++) begin
+      send_data(2'b10, $random % 256);
+    end
+
+    // Test quick switching between types
+    @(posedge clk);
+    send_data(2'b01, 8'h77);
+    send_data(2'b00, 8'h88);
+    send_data(2'b10, 8'h44);
+    
+    //DATA 
+    @(posedge clk);
+    for (int i = 0; i < 16; i++) begin
+      send_data(2'b10, $random % 256);
+    end
+    
+    //VOIP
+    @(posedge clk);
+    for (int i = 0; i < 20; i++) begin
+      send_data(2'b00, $random % 256);
+    end   
+      
+    //Stream
+    for (int i = 0; i < 20; i++) begin
+      send_data(2'b01, $random % 256);
+    end   
+    
+    //VOIP
+    for (int i = 0; i < 20; i++) begin
+      send_data(2'b00, $random % 256);
+    end       
+    // Finish the test
+    @(posedge clk);
+    $finish;
+  end
+
+  // Task to send data
+  task send_data(input logic[1:0] dtype, input logic[7:0] data);
+    begin
+      @(posedge clk);
+      stream_type = dtype;
+      data_in = data;
+      i_valid = 1;
+      //@(posedge clk);
+      //i_valid = 0;  // Ensure only one valid clock cycle per data
+    end
+  endtask
+
+  // Monitor outputs
+  initial begin
+    $monitor("Time=%t, State=%h, Input Valid=%b, Stream Type=%b, Data In=%h, Output Valid=%b, Output Data=%h, Output Type=%b",
+              $time, uut.CSTATE, i_valid, stream_type, data_in, O_valid, O_data, O_current_type);
+  end
+  initial begin 
+    $dumpvars();
+  end 
+
+endmodule
+
 
  
