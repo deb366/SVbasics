@@ -13,30 +13,30 @@ module FACTORIAL_N (
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
-      r_data <= 0;                       // Reset r_data to 0
-      r_current <= 0;                    // Reset r_current to 0
-      o_valid <= 0;                      // Reset o_valid to 0
+      r_data <= 0;                       
+      r_current <= 0;                    
+      o_valid <= 0;                      
     end 
     else if (i_load) begin
-      r_data <= 1;                       // Initialize factorial result
-      r_current <= n;                    // Load input n into r_current
-      o_valid <= 0;                      // Clear valid signal during computation
+      r_data <= 1;                       
+      r_current <= n;                    
+      o_valid <= 0;                      
     end 
     else if (r_current > 1) begin
-      r_data <= r_data * r_current;      // Multiply by current value
-      r_current <= r_current - 1;        // Decrement current value
+      r_data <= r_data * r_current;      
+      r_current <= r_current - 1;        
     end 
     else if (r_current == 0) begin
-      r_data <= 1;      // Multiply by current value
+      r_data <= 1;      
       o_valid <= 1;
-      //r_current <= r_current - 1;        // Decrement current value
+      //r_current <= r_current - 1;        
     end     
     else if (r_current == 1) begin
-      o_valid <= 1;                      // Assert valid when computation completes
+      o_valid <= 1;                      
     end
   end
 
-  assign o_data = r_data;                // Assign result to output
+  assign o_data = r_data;                
 
 endmodule
 
