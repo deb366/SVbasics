@@ -3,8 +3,8 @@ Problem breakdown: The design basically needs the output to take the input(staye
 */
 
 module SWITCH_DEBOUNCE #(
-    parameter DEBOUNCE_PERIOD = 10,  // 10ns debounce period
-    parameter CLOCK_FREQ = 100000000 // Assuming 100MHz clock
+    parameter DEBOUNCE_PERIOD = 30,  // 10ns debounce period
+    parameter CLOCK_FREQ = 1000000 // Assuming 100MHz clock
 )(
     input wire clk,          // System clock
     input wire rst_n,        // Active low reset
@@ -14,7 +14,7 @@ module SWITCH_DEBOUNCE #(
 
     // Calculate counter width based on clock frequency and debounce period
     // Counter_width = ceil(log2(CLOCK_FREQ * DEBOUNCE_PERIOD / 1e9))
-    localparam COUNTER_WIDTH = 4;  // For 10ns at 100MHz we need very few bits
+    localparam COUNTER_WIDTH = 16;  // For 10ns at 100MHz we need very few bits
     
     // State definitions
     localparam IDLE = 2'b00;
@@ -92,3 +92,73 @@ module SWITCH_DEBOUNCE #(
     end
 
 endmodule
+
+//-------------------Testbench--------------//
+// Code your testbench here
+// or browse Examples
+`timescale 1ns/1ps
+
+module switch_debounce_tb();
+
+    // Parameters
+    localparam DEBOUNCE_PERIOD = 30;  // Debounce period (10 clock cycles)
+    localparam CLOCK_FREQ = 100000000; // Clock frequency (100 MHz)
+    
+    // Inputs
+    reg clk;
+    reg rst_n;
+    reg switch_in;
+
+    // Outputs
+    wire switch_out;
+
+    // Instantiate the DUT (Device Under Test)
+    SWITCH_DEBOUNCE #(
+        .DEBOUNCE_PERIOD(DEBOUNCE_PERIOD),
+        .CLOCK_FREQ(CLOCK_FREQ)
+    ) dut (
+        .clk(clk),
+        .rst_n(rst_n),
+        .switch_in(switch_in),
+        .switch_out(switch_out)
+    );
+
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk; // 100 MHz clock (10 ns period)
+    end
+
+    // Stimulus
+    initial begin
+        // Reset the system
+        rst_n = 0;
+        switch_in = 0;
+        #20 rst_n = 1; // Deassert reset after 20 ns
+
+        // Simulate bouncing
+        #30 switch_in = 1; // Switch press
+        #15 switch_in = 0; // Bounce
+        #15 switch_in = 1; // Bounce
+        #50 switch_in = 1; // Stable high
+        
+        #100 switch_in = 1; // Switch release
+        #200 switch_in = 1; // Bounce
+        #20 switch_in = 0; // Bounce
+        #50 switch_in = 0; // Stable low
+
+        // End simulation
+        #200 $finish;
+    end
+
+    // Monitor signals
+    initial begin
+        $monitor("Time: %0t | rst_n: %b | switch_in: %b | switch_out: %b", 
+                 $time, rst_n, switch_in, switch_out);
+    end
+  initial begin 
+    $dumpvars;
+  end 
+
+endmodule
+
