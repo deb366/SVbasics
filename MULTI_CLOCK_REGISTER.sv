@@ -7,6 +7,7 @@ cal: lets assume we want to calculate 100clk of 500Mhz clk, at the time total of
       Tr = 1/625M
       fr = 625MHz 
 */
+//This code is not complete, the uArch is added with the same name
 
 module MULTI_CLOCK_REGISTER (
     // First clock domain (1B write)
