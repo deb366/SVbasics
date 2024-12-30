@@ -3,7 +3,7 @@ There are 2 input streams: first is @500MHz and 1B per cycle and second is @250M
 The read frequency is 625MHz
 cal: lets assume we want to calculate 100clk of 500Mhz clk, at the time total of 100+50*3= 250B will be accumulated 
       we read by 2B, the read freq is fr
-      100/500M = 125 8 1/Tr
+      100/500M = 125 * Tr  #both are unit of time
       Tr = 1/625M
       fr = 625MHz 
 */
