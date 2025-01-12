@@ -1,4 +1,4 @@
-//Bubble Sort  .. The array[0] has the max value 
+//Bubble Sort  .. The array[0] has the max value , Big(index 0) to small(index N-1) 
 module model #(parameter 
     BITWIDTH = 3
 ) (
