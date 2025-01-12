@@ -44,6 +44,7 @@ endmodule
 
 //+++++++++++++++++++++++++++++++++//
 //4 output at the same time
+// r_a0,r_a1,r_a2,r_a3,(r_a2+r_a3),(r_a2+r_a3)+r_a3,(r_a2+r_a3)+(r_a2+r_a3)+r_a3, (r_a2+r_a3)+r_a3+(r_a2+r_a3)+(r_a2+r_a3)+r_a3
 //+++++++++++++++++++++++++++++++++//
 module FIBONACCII(input logic clk,rstn,output logic [15:0] r_a3, r_a2,r_a1, r_a0);
  // logic [7:0] r_a0,r_a1;
