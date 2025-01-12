@@ -15,7 +15,8 @@ module COUNT_TIMES #(
   logic  w_next;
 
 always_ff @(posedge clk)begin 
-  if(!rstn || O_END) begin O_COUNT <= 'h0; r_times <= 'h0; end 
+  if(!rstn) begin O_COUNT <= 'h0; r_times <= 'h0; end 
+  else if(O_END) begin O_COUNT <= 'h0; r_times <= 'h0; end   
   else begin 
     if(w_next) begin 
     	O_COUNT <= O_COUNT + 1;
@@ -33,4 +34,3 @@ end
   assign O_END = (O_COUNT == I_TIMES) && (r_times == I_TIMES);
   
 endmodule
-
