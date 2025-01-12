@@ -23,7 +23,7 @@ module HalfToSingleConverter(
                         exp_half + 112;  // Convert exponent from half to single (127 - 15)
 
     // Shift mantissa to align with single-precision format
-    assign mant_single = exp_half == 0 ? 0 : {mant_half, 13'b0};  // Zero or denormal
+    assign mant_single = exp_half == 0 ? 0 : {mant_half, 13'b0};  // Zero or denormal else pad 0 at the lsb
 
     // Combine into single-precision format
     assign single_precision = {sign, exp_single, mant_single};
