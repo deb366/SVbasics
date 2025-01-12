@@ -16,7 +16,7 @@ module FIBONACCII(input logic clk,rstn,output logic [7:0] w_sum);
     end 
   end 
   
-  assign w_sum = r_a0 + r_a1;
+  assign w_sum = r_a1;
 endmodule 
 
 //+++++++++++++++++++++++++++++++++//
