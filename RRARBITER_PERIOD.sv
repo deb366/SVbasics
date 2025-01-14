@@ -1,3 +1,6 @@
+/*
+As soon as the grant is given to a requester it should grant for atleast 2 clock cycles.
+*/
 
 module round_robin_arbiter_variable_time_slice(
 		input clk,
