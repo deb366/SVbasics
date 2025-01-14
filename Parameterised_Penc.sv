@@ -1,3 +1,4 @@
+// Priority Encoder 
 module Parameterised_Penc #(
   parameter N = 4,
   localparam N1 = $clog2(N)
