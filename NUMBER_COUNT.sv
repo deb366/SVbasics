@@ -1,5 +1,6 @@
 /*
-The module will take 8bit input , and gives 32bit output the output is the total count of the specific input number and the number itself.
+The module will take 8bit input , and gives 32bit output the output is the total count of the specific input number and the number itself. lets the input is 
+ABDAA2  the output will be 3 and A.
 	Sol:
 	We need a [255:0][7:0] RAM for this, at the very next clk of input change the RAM's input position will be added with 1. At the next clk the RAM's updated position will be read to give the output. 
 */
