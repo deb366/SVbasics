@@ -102,6 +102,145 @@ assign O_CNT = r_ram[r_inum];
 assign O_MAX_REQUEST_ID = items[0].id;
 assign O_MAX_REQUEST_NUM = items[0].value;
       
-      
-	  
 endmodule 
+
+//---------------------------//
+//-------Test Bench ---------//
+//---------------------------//
+
+`timescale 1ns/1ps
+
+module tb_count_numbers;
+
+  // Interface signals
+  logic clk;
+  logic rstn;
+  logic [7:0] I_NUM;
+  logic sortit;
+  logic [7:0] O_NUM;
+  logic [7:0] O_CNT;
+  logic [7:0] O_MAX_REQUEST_ID;
+  logic [7:0] O_MAX_REQUEST_NUM;
+
+  // Instantiate the DUT
+  count_numbers dut (
+    .clk(clk),
+    .rstn(rstn),
+    .I_NUM(I_NUM),
+    .sortit(sortit),
+    .O_NUM(O_NUM),
+    .O_CNT(O_CNT),
+    .O_MAX_REQUEST_ID(O_MAX_REQUEST_ID),
+    .O_MAX_REQUEST_NUM(O_MAX_REQUEST_NUM)
+  );
+
+  // Clock generation
+  initial clk = 0;
+  always #5 clk = ~clk;
+
+  // Testbench class declarations
+  class Transaction;
+    rand logic [7:0] num;
+    rand bit sort;
+
+    constraint c_num { num inside {[0:255]}; }
+  endclass
+
+  class Generator;
+    Transaction txn;
+
+    function new();
+      txn = new();
+    endfunction
+
+    virtual task generate1(input logic en_sort);
+      txn.randomize();
+      txn.sort = en_sort;
+    endtask
+  endclass
+
+  class Monitor;
+    logic [7:0] observed_num;
+    logic [7:0] observed_count;
+
+    function new();
+    endfunction
+
+    virtual task capture(input logic [7:0] num, input logic [7:0] cnt);
+      observed_num = num;
+      observed_count = cnt;
+    endtask
+  endclass
+
+  class Scoreboard;
+    logic [7:0] ram[256];
+    logic [7:0] max_id;
+    logic [7:0] max_val;
+
+    function new();
+      foreach (ram[i]) ram[i] = 8'd0;
+    endfunction
+
+    virtual task update(input logic [7:0] num);
+      ram[num]++;
+    endtask
+
+    virtual function void validate(input logic sort, input logic [7:0] id, input logic [7:0] val);
+      if (sort) begin
+        max_id = 0;
+        max_val = 0;
+        foreach (ram[i]) begin
+          if (ram[i] > max_val) begin
+            max_val = ram[i];
+            max_id = i;
+          end
+        end
+
+        assert(id == max_id && val == max_val)
+          else $fatal("Validation failed: Expected id=%0d, val=%0d, Got id=%0d, val=%0d", max_id, max_val, id, val);
+      end
+    endfunction
+  endclass
+
+  // Testbench components
+  Generator gen;
+  Monitor mon;
+  Scoreboard sb;
+
+  // Test initialization,
+  initial begin
+    gen = new();
+    mon = new();
+    sb = new();
+
+    rstn = 0;
+    I_NUM = 8'd0;
+    sortit = 0;
+    #20 rstn = 1;
+
+    // Test sequence
+    repeat (100) begin
+      gen.generate1($urandom_range(0, 1));
+      @(posedge clk);
+      I_NUM = gen.txn.num;
+      sortit = gen.txn.sort;
+      @(posedge clk);
+
+      sb.update(I_NUM);
+
+      if (sortit) begin
+        @(posedge clk);
+        sb.validate(sortit, O_MAX_REQUEST_ID, O_MAX_REQUEST_NUM);
+      end
+    end
+
+    $display("Test completed successfully.");
+    $finish;
+  end
+        
+  initial begin 
+    $dumpvars;        
+  end 
+
+endmodule
+
