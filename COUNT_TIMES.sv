@@ -31,6 +31,6 @@ end
 
   //assign w_next = (r_times == O_COUNT) && |O_COUNT && (r_times == (O_COUNT -1));
   assign w_next = r_times == O_COUNT ;
-  assign O_END = (O_COUNT == I_TIMES) && (r_times == I_TIMES);
+    assign O_END = (O_COUNT == I_TIMES) && w_next;
   
 endmodule
