@@ -28,7 +28,7 @@ module model (
             mem[cnt] <= din;
         end
     end
-    // Combinational logic
+    // Combinational logic, aibi is initialised to 0 implicitely 
     assign run = (cnt == 0);
     assign a1b1 = (run) ? mem[0] * mem[3] : a1b1;
     assign a2b2 = (run) ? mem[1] * mem[4] : a2b2;
