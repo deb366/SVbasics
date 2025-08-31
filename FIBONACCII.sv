@@ -1,7 +1,7 @@
 // Code your design here
 
 //+++++++++++++++++++++++++++++++++//
-//2 output at the same time
+//1 output at the same time
 //Just make the future 1(default) terms depends on the present terms 
 //+++++++++++++++++++++++++++++++++//
 
