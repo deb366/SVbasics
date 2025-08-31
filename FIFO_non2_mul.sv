@@ -34,7 +34,7 @@ module FIFO_non2_mul #(
         if (!rst_n) begin
             wr_ptr <= 0;
         end else if (wr_en && !full) begin
-            wr_ptr <= (wr_ptr == DEPTH-1) ? 0 : wr_ptr + 1;  // Wraps at 4
+            wr_ptr <= (wr_ptr == DEPTH-1) ? 0 : wr_ptr + 1;  // Wraps at 4->0, at full the wr_ptr not changed 
         end
     end
 
@@ -43,7 +43,7 @@ module FIFO_non2_mul #(
         if (!rst_n) begin
             rd_ptr <= 0;
         end else if (rd_en && !empty) begin
-            rd_ptr <= (rd_ptr == DEPTH-1) ? 0 : rd_ptr + 1;  // Wraps at 4
+            rd_ptr <= (rd_ptr == DEPTH-1) ? 0 : rd_ptr + 1;  // Wraps at 4->0, at empty the rd_ptr not changed
         end
     end
 
