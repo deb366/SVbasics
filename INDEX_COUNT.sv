@@ -1,5 +1,5 @@
 
-//Design a logic to clock out index of bits having 1 value on a 8bit number and use minimal number clocks. [example 1000 1100 will give 2,3,7 at 3 consecutive clocks] 
+//Design a logic to clock out index of bits having 1 value on a 8bit number and use minimal number clocks. [example 1000_1100 will give 2,3,7 at 3 consecutive clocks] 
 
 module INDEX_COUNT #(parameter N = 8) (input logic clk,rstn, input logic I_LOAD, input logic [N-1:0] I_VECTOR, output logic [$clog2(N)-1:0] O_INDEX);
 //the I_LOAD is a pulse, indicating the new input arrival 
