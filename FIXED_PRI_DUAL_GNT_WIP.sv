@@ -15,12 +15,12 @@ module fixed_priority_arbiter_dual_grant_fsm(
         GRANT_1 = 4'b0010,    // Granted to requester 1
         GRANT_2 = 4'b0100,    // Granted to requester 2
         GRANT_3 = 4'b1000,    // Granted to requester 3
-        GRANT_0_1 = 4'b0011,  // Granted to requesters 0 and 1
-        GRANT_0_2 = 4'b0101,  // Granted to requesters 0 and 2
-        GRANT_0_3 = 4'b1001,  // Granted to requesters 0 and 3
-        GRANT_1_2 = 4'b0110,  // Granted to requesters 1 and 2
-        GRANT_1_3 = 4'b1010,  // Granted to requesters 1 and 3
-        GRANT_2_3 = 4'b1100   // Granted to requesters 2 and 3
+        GRANT_0_1 = 4'b0011,  // Granted to requesters 0 and 1 together 
+        GRANT_0_2 = 4'b0101,  // Granted to requesters 0 and 2 together 
+        GRANT_0_3 = 4'b1001,  // Granted to requesters 0 and 3 together 
+        GRANT_1_2 = 4'b0110,  // Granted to requesters 1 and 2 together 
+        GRANT_1_3 = 4'b1010,  // Granted to requesters 1 and 3 together 
+        GRANT_2_3 = 4'b1100   // Granted to requesters 2 and 3 together 
     } state_t;
 
     state_t current_state, next_state;
