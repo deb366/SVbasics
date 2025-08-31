@@ -52,7 +52,7 @@ module DEADLINE_SCHEDULER(
             min_time = 2147483647;
             min_index = -1;
             for (int i = 0; i < MAX_TASKS; i++) begin
-                if (tasks[i].valid && tasks[i].deadline < min_time) begin
+                if (tasks[i].valid && tasks[i].deadline < min_time) begin //enter only if the deadline is even lesser
                     min_time = tasks[i].deadline;
                     min_index = i;
                 end
