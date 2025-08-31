@@ -86,11 +86,11 @@ always_comb begin
                   if (items[j].value < items[j + 1].value) begin
                         tmp = items[j].value;
                     	items[j].value = items[j+1].value;
-                        items[j+1].value = items[j].value;
+                        items[j+1].value = tmp;
                     
                     	tmp_id = items[j].id;
                     	items[j].id = items[j+1].id;
-                    	items[j+1].id = items[j].id;
+                    	items[j+1].id = tmp_id;
                     end 
                 end
             end
