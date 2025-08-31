@@ -1,5 +1,9 @@
 // Code your design here
 
+//+++++++++++++++++++++++++++++++++//
+//2 output at the same time
+//Just make the future 1(default) terms depends on the present terms 
+//+++++++++++++++++++++++++++++++++//
 
 module FIBONACCII(input logic clk,rstn,output logic [7:0] w_sum);
   logic [7:0] r_a0,r_a1;
