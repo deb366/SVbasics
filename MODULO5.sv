@@ -38,6 +38,104 @@ module div_by_3_checker (
 endmodule
 
 //---- Method 2 -----------//
+// Parameterised Code 
+
+module modulo_calculator #(
+    parameter int N = 3,           // Modulo value (natural number)
+    parameter int WIDTH = $clog2(N) // Width needed for remainder
+) (
+    input  logic clk,
+    input  logic reset,
+    input  logic bit_in,           // Incoming bit (MSB first)
+    input  logic bit_valid,        // Valid signal for the input bit
+    output logic [WIDTH-1:0] remainder,  // Current remainder modulo N
+    output logic remainder_valid   // Valid signal for remainder output
+);
+
+    // Input validation
+    initial begin
+        if (N < 1) begin
+            $error("N must be a natural number (N >= 1)");
+        end
+    end
+
+    // FSM states
+    typedef enum logic [1:0] {
+        IDLE = 2'b00,
+        PROCESSING = 2'b01,
+        VALID_OUTPUT = 2'b10
+    } state_t;
+    
+    state_t current_state, next_state;
+    logic [WIDTH-1:0] current_remainder, next_remainder;
+    logic output_valid_reg;
+    logic [WIDTH:0] temp_result;   // Extra bit for intermediate calculation
+
+    // State transition and remainder calculation
+    always_ff @(posedge clk or posedge reset) begin
+        if (reset) begin
+            current_state <= IDLE;
+            current_remainder <= '0;
+            output_valid_reg <= 1'b0;
+        end else begin
+            current_state <= next_state;
+            current_remainder <= next_remainder;
+            output_valid_reg <= (next_state == VALID_OUTPUT);
+        end
+    end
+
+    // Next state logic and remainder calculation
+    always_comb begin
+        next_state = current_state;
+        next_remainder = current_remainder;
+        temp_result = '0;
+        
+        case (current_state)
+            IDLE: begin
+                if (bit_valid) begin
+                    next_state = PROCESSING;
+                    // For first bit: remainder = bit_value % N
+                    next_remainder = (bit_in ? 1 : 0) % N;
+                end
+            end
+            
+            PROCESSING: begin
+                if (bit_valid) begin
+                    // For accumulated number: new_remainder = (current_remainder * 2 + bit_in) % N
+                    temp_result = (current_remainder << 1) + (bit_in ? 1 : 0);
+                    if (temp_result >= N) begin
+                        next_remainder = temp_result - N;
+                    end else begin
+                        next_remainder = temp_result[WIDTH-1:0];
+                    end
+                    next_state = VALID_OUTPUT;
+                end else begin
+                    next_state = PROCESSING;
+                end
+            end
+            
+            VALID_OUTPUT: begin
+                next_state = bit_valid ? PROCESSING : VALID_OUTPUT;
+                if (bit_valid) begin
+                    // Continue processing with new bit
+                    temp_result = (current_remainder << 1) + (bit_in ? 1 : 0);
+                    if (temp_result >= N) begin
+                        next_remainder = temp_result - N;
+                    end else begin
+                        next_remainder = temp_result[WIDTH-1:0];
+                    end
+                end
+            end
+        endcase
+    end
+
+    // Output assignments
+    assign remainder = current_remainder;
+    assign remainder_valid = output_valid_reg;
+
+endmodule
+
+//------- Method 3 --------//
 // Code 
 module mod5(
   input logic I_STREAM,
