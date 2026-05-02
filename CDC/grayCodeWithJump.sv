@@ -96,7 +96,7 @@ module cdc_handshake_load #(
         .sig_src (ack_dst),
         .sig_dst (ack_src)
     );
-Endmodule
+endmodule
 
 
 
